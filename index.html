@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Status Code</title>
+    <link rel="apple-touch-icon" href="image_28.png">
+    <link rel="icon" type="image/png" href="image_28.png">
+    <style>
+        :root {
+            --bg: #fff;
+            --main: #111;
+            --accent: #fafafa;
+            --radius: 15px;
+            --border: #eee;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+        body {
+            background-color: var(--bg); color: var(--main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex; flex-direction: column; align-items: center; min-height: 100vh;
+            padding: calc(env(safe-area-inset-top, 20px) + 20px) 20px calc(env(safe-area-inset-bottom, 10px) + 20px) 20px;
+        }
+
+        .fridge-container { width: 100%; max-width: 400px; display: flex; flex-direction: column; align-items: center; flex-grow: 1; }
+        
+        header { text-align: left; width: 100%; margin-bottom: 30px; }
+        h1 { font-size: 2.2rem; font-weight: 900; letter-spacing: -1.5px; line-height: 1; }
+        .subtitle { font-size: 0.85rem; color: #999; font-weight: 600; margin-top: 5px; }
+
+        /* Input Section */
+        .search-box { width: 100%; margin-bottom: 25px; }
+        input[type="number"] {
+            width: 100%; padding: 25px; border-radius: var(--radius);
+            border: 2px solid var(--border); background: var(--accent);
+            font-size: 2.5rem; font-weight: 800; text-align: center; color: var(--main);
+            outline: none; transition: border-color 0.2s;
+            -moz-appearance: textfield;
+        }
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        input:focus { border-color: var(--main); background: #fff; }
+
+        /* Result Area */
+        #resultArea { width: 100%; min-height: 200px; display: flex; flex-direction: column; gap: 15px; }
+        .card { 
+            background: #fff; border: 2px solid var(--main); border-radius: var(--radius); 
+            padding: 25px; animation: slideUp 0.3s ease;
+        }
+        .code-title { font-size: 1.2rem; font-weight: 800; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+        .group-tag { font-size: 0.6rem; padding: 3px 8px; border-radius: 5px; color: #fff; text-transform: uppercase; }
+        .meaning { font-size: 1rem; line-height: 1.5; font-weight: 500; color: #444; margin-bottom: 15px; }
+        .advice { font-size: 0.85rem; color: #888; border-top: 1px solid #eee; padding-top: 15px; font-style: italic; }
+
+        /* Groups Legend */
+        .legend { width: 100%; display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; margin-top: 20px; }
+        .dot { height: 4px; border-radius: 2px; }
+
+        /* Colors by Category */
+        .c1xx { background: #3498db; } .c2xx { background: #2ecc71; }
+        .c3xx { background: #f1c40f; } .c4xx { background: #e67e22; }
+        .c5xx { background: #e74c3c; }
+
+        /* Footer Parts */
+        .footer-btns { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: auto; padding: 30px 0 10px; width: 100%; }
+        .kofi-btn, .home-btn {
+            width: 100%; text-align: center; padding: 18px;
+            border-radius: var(--radius); font-weight: 800; font-size: 0.9rem; text-decoration: none;
+        }
+        .kofi-btn { background: var(--main); color: #fff; }
+        .home-btn { background: var(--border); color: var(--main); border: none; cursor: pointer; }
+
+        footer { font-size: 0.7rem; color: #bbb; text-align: center; line-height: 1.6; }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="fridge-container">
+    <header>
+        <h1>Status Code</h1>
+        <p class="subtitle">Quick reference for HTTP protocols.</p>
+    </header>
+
+    <div class="search-box">
+        <input type="number" id="codeInput" placeholder="404" min="100" max="599" autofocus>
+    </div>
+
+    <div id="resultArea">
+        <div style="text-align: center; color: #ccc; margin-top: 40px; font-weight: 700;">Type 3-digit code</div>
+    </div>
+
+    <div class="legend">
+        <div class="dot c1xx"></div><div class="dot c2xx"></div><div class="dot c3xx"></div><div class="dot c4xx"></div><div class="dot c5xx"></div>
+    </div>
+
+    <div class="footer-btns">
+        <a href="https://ko-fi.com/afrorakda" target="_blank" class="kofi-btn">🍵 Support me on Ko-fi</a>
+        <button class="home-btn" id="homeBtn">Add to Home Screen</button>
+    </div>
+
+    <footer>
+        No login / No tracking / No ads / Browser only<br>
+        afrorakda © 2026
+    </footer>
+</div>
+
+<script>
+    const codes = {
+        // 1xx
+        100: ["Continue", "c1xx", "リクエスト継続中。そのまま続けてOK。", "サーバーが最初の部分を受け取った状態です。"],
+        101: ["Switching Protocols", "c1xx", "通信のやり方（プロトコル）を切り替えます。", "WebSocketへの切り替え時などによく見ます。"],
+        // 2xx
+        200: ["OK", "c2xx", "大成功！リクエストは無事に完了しました。", "一番よく見る「正常」な状態です。"],
+        201: ["Created", "c2xx", "作成完了。新しいデータが正常に作られました。", "データの保存に成功した時の返事です。"],
+        204: ["No Content", "c2xx", "成功したけど、返す中身（表示するもの）はありません。", "保存だけして画面を変えない時に使われます。"],
+        // 3xx
+        301: ["Moved Permanently", "c3xx", "恒久的な引っ越し。URLが新しくなりました。", "古いURLから新しいURLへ自動で飛ばされます。"],
+        302: ["Found", "c3xx", "一時的な引っ越し。今は別の場所にあります。", "一時的なリダイレクト（転送）です。"],
+        304: ["Not Modified", "c3xx", "更新なし。手元のキャッシュを使ってOK。", "通信量を減らすための賢い返事です。"],
+        // 4xx
+        400: ["Bad Request", "c4xx", "リクエスト形式が不正。書き方がおかしいよ。", "パラメータの間違いなどをチェックしてください。"],
+        401: ["Unauthorized", "c4xx", "認証エラー。パスワードなどが足りません。", "ログインが必要なページです。"],
+        403: ["Forbidden", "c4xx", "閲覧禁止。アクセス権限がありません。", "ログインしていても見せられない場所です。"],
+        404: ["Not Found", "c4xx", "ページが見つかりません。URLが間違っています。", "一番有名なエラー。タイポを疑いましょう。"],
+        405: ["Method Not Allowed", "c4xx", "許可されていない操作。送り方が違います。", "POSTすべき場所にGETで送った時などに発生。"],
+        408: ["Request Timeout", "c4xx", "タイムアウト。送るのが遅すぎました。", "ネット環境が不安定な可能性があります。"],
+        418: ["I'm a teapot", "c4xx", "私はティーポット。コーヒーは淹れられません。", "エイプリルフールのジョーク。実在する公式コードです。"],
+        429: ["Too Many Requests", "c4xx", "短時間に送りすぎ。少し落ち着いて。", "アクセス制限（リミット）にかかっています。"],
+        // 5xx
+        500: ["Internal Server Error", "c5xx", "サーバー内部エラー。あっち側で何かが壊れた。", "プログラムのバグや設定ミスが疑われます。"],
+        502: ["Bad Gateway", "c5xx", "ゲートウェイエラー。中継地点で失敗しました。", "サーバーの再起動中などによく起きます。"],
+        503: ["Service Unavailable", "c5xx", "サービス利用不可。メンテ中かパンク状態。", "今は忙しいので、後でまた来てください。"],
+        504: ["Gateway Timeout", "c5xx", "中継地点でタイムアウト。返事が遅すぎます。", "裏側のサーバーが応答していない状態です。"]
+    };
+
+    const input = document.getElementById('codeInput');
+    const resArea = document.getElementById('resultArea');
+
+    input.oninput = () => {
+        const val = input.value;
+        if (val.length === 3) {
+            const data = codes[val];
+            if (data) {
+                resArea.innerHTML = `
+                    <div class="card">
+                        <div class="code-title">
+                            <span class="group-tag ${data[1]}">${val} Group</span>
+                            <strong>${data[0]}</strong>
+                        </div>
+                        <p class="meaning">${data[2]}</p>
+                        <p class="advice">${data[3]}</p>
+                    </div>
+                `;
+            } else {
+                resArea.innerHTML = `<div style="text-align: center; color: #e74c3c; margin-top: 40px; font-weight: 700;">Unknown Code: ${val}</div>`;
+            }
+        } else {
+            resArea.innerHTML = `<div style="text-align: center; color: #ccc; margin-top: 40px; font-weight: 700;">Type 3-digit code</div>`;
+        }
+    };
+</script>
+
+</body>
+</html>
