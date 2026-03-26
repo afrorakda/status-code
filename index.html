@@ -9,7 +9,7 @@
     <style>
         :root {
             --bg: #fff;
-            --main: #111;
+            --main: #333;
             --accent: #fafafa;
             --radius: 15px;
             --border: #eee;
@@ -25,53 +25,53 @@
 
         .fridge-container { width: 100%; max-width: 400px; display: flex; flex-direction: column; align-items: center; flex-grow: 1; }
         
-        header { text-align: left; width: 100%; margin-bottom: 30px; }
-        h1 { font-size: 2.2rem; font-weight: 900; letter-spacing: -1.5px; line-height: 1; }
+        header { text-align: center; width: 100%; margin-bottom: 30px; }
+        h1 { font-size: 2.2rem; font-weight: 900; letter-spacing: -1.5px; line-height: 1; color: var(--main); }
         .subtitle { font-size: 0.85rem; color: #999; font-weight: 600; margin-top: 5px; }
 
-        /* Input Section */
         .search-box { width: 100%; margin-bottom: 25px; }
         input[type="number"] {
             width: 100%; padding: 25px; border-radius: var(--radius);
             border: 2px solid var(--border); background: var(--accent);
             font-size: 2.5rem; font-weight: 800; text-align: center; color: var(--main);
-            outline: none; transition: border-color 0.2s;
-            -moz-appearance: textfield;
+            outline: none; transition: border-color 0.2s; -moz-appearance: textfield;
         }
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         input:focus { border-color: var(--main); background: #fff; }
 
-        /* Result Area */
         #resultArea { width: 100%; min-height: 200px; display: flex; flex-direction: column; gap: 15px; }
         .card { 
             background: #fff; border: 2px solid var(--main); border-radius: var(--radius); 
-            padding: 25px; animation: slideUp 0.3s ease;
+            padding: 25px; animation: slideUp 0.3s ease; text-align: left;
         }
         .code-title { font-size: 1.2rem; font-weight: 800; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
-        .group-tag { font-size: 0.6rem; padding: 3px 8px; border-radius: 5px; color: #fff; text-transform: uppercase; }
-        .meaning { font-size: 1rem; line-height: 1.5; font-weight: 500; color: #444; margin-bottom: 15px; }
-        .advice { font-size: 0.85rem; color: #888; border-top: 1px solid #eee; padding-top: 15px; font-style: italic; }
+        .group-tag { font-size: 0.6rem; padding: 4px 10px; border-radius: 15px; color: #fff; text-transform: uppercase; font-weight: 800; }
+        .meaning { font-size: 1rem; line-height: 1.5; font-weight: 700; color: var(--main); margin-bottom: 15px; }
+        .advice { font-size: 0.85rem; color: #888; border-top: 1px solid #eee; padding-top: 15px; font-weight: 500; }
 
-        /* Groups Legend */
         .legend { width: 100%; display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; margin-top: 20px; }
         .dot { height: 4px; border-radius: 2px; }
-
-        /* Colors by Category */
         .c1xx { background: #3498db; } .c2xx { background: #2ecc71; }
         .c3xx { background: #f1c40f; } .c4xx { background: #e67e22; }
         .c5xx { background: #e74c3c; }
 
-        /* Footer Parts */
-        .footer-btns { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: auto; padding: 30px 0 10px; width: 100%; }
+        .footer-btns { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: auto; padding: 30px 0 10px; width: 100%; }
         .kofi-btn, .home-btn {
             width: 100%; text-align: center; padding: 18px;
             border-radius: var(--radius); font-weight: 800; font-size: 0.9rem; text-decoration: none;
+            transition: 0.2s;
         }
         .kofi-btn { background: var(--main); color: #fff; }
-        .home-btn { background: var(--border); color: var(--main); border: none; cursor: pointer; }
+        .home-btn { background: var(--accent); color: var(--main); border: 1px solid var(--border); cursor: pointer; }
+        .kofi-btn:active, .home-btn:active { transform: scale(0.98); opacity: 0.9; }
 
-        footer { font-size: 0.7rem; color: #bbb; text-align: center; line-height: 1.6; }
+        footer { font-size: 0.7rem; color: #bbb; text-align: center; line-height: 1.6; margin-top: 15px; }
 
+        /* Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
+        .modal-content { background: #fff; padding: 30px; border-radius: var(--radius); max-width: 320px; width: 100%; position: relative; text-align: left; animation: slideUp 0.3s ease; }
+        .close-icon { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; color: #aaa; cursor: pointer; padding: 5px; }
+        
         @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
@@ -106,37 +106,45 @@
     </footer>
 </div>
 
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <span class="close-icon" id="closeModal">&times;</span>
+        <h2 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;"><span>📱</span> Install</h2>
+        <p style="font-size: 0.85rem; color: #666; margin-bottom: 20px; font-weight: 500;">Add to your home screen for quick access.</p>
+        <div style="font-size: 0.9rem; line-height: 1.6; color: var(--main);">
+            <p>🍏 <strong>iPhone:</strong> Share > Add to Home Screen</p>
+            <p style="margin-top:12px;">🤖 <strong>Android:</strong> Menu > Add to home screen</p>
+        </div>
+    </div>
+</div>
+
 <script>
     const codes = {
-        // 1xx
-        100: ["Continue", "c1xx", "リクエスト継続中。そのまま続けてOK。", "サーバーが最初の部分を受け取った状態です。"],
-        101: ["Switching Protocols", "c1xx", "通信のやり方（プロトコル）を切り替えます。", "WebSocketへの切り替え時などによく見ます。"],
-        // 2xx
-        200: ["OK", "c2xx", "大成功！リクエストは無事に完了しました。", "一番よく見る「正常」な状態です。"],
-        201: ["Created", "c2xx", "作成完了。新しいデータが正常に作られました。", "データの保存に成功した時の返事です。"],
-        204: ["No Content", "c2xx", "成功したけど、返す中身（表示するもの）はありません。", "保存だけして画面を変えない時に使われます。"],
-        // 3xx
-        301: ["Moved Permanently", "c3xx", "恒久的な引っ越し。URLが新しくなりました。", "古いURLから新しいURLへ自動で飛ばされます。"],
-        302: ["Found", "c3xx", "一時的な引っ越し。今は別の場所にあります。", "一時的なリダイレクト（転送）です。"],
-        304: ["Not Modified", "c3xx", "更新なし。手元のキャッシュを使ってOK。", "通信量を減らすための賢い返事です。"],
-        // 4xx
-        400: ["Bad Request", "c4xx", "リクエスト形式が不正。書き方がおかしいよ。", "パラメータの間違いなどをチェックしてください。"],
-        401: ["Unauthorized", "c4xx", "認証エラー。パスワードなどが足りません。", "ログインが必要なページです。"],
-        403: ["Forbidden", "c4xx", "閲覧禁止。アクセス権限がありません。", "ログインしていても見せられない場所です。"],
-        404: ["Not Found", "c4xx", "ページが見つかりません。URLが間違っています。", "一番有名なエラー。タイポを疑いましょう。"],
-        405: ["Method Not Allowed", "c4xx", "許可されていない操作。送り方が違います。", "POSTすべき場所にGETで送った時などに発生。"],
-        408: ["Request Timeout", "c4xx", "タイムアウト。送るのが遅すぎました。", "ネット環境が不安定な可能性があります。"],
-        418: ["I'm a teapot", "c4xx", "私はティーポット。コーヒーは淹れられません。", "エイプリルフールのジョーク。実在する公式コードです。"],
-        429: ["Too Many Requests", "c4xx", "短時間に送りすぎ。少し落ち着いて。", "アクセス制限（リミット）にかかっています。"],
-        // 5xx
-        500: ["Internal Server Error", "c5xx", "サーバー内部エラー。あっち側で何かが壊れた。", "プログラムのバグや設定ミスが疑われます。"],
-        502: ["Bad Gateway", "c5xx", "ゲートウェイエラー。中継地点で失敗しました。", "サーバーの再起動中などによく起きます。"],
-        503: ["Service Unavailable", "c5xx", "サービス利用不可。メンテ中かパンク状態。", "今は忙しいので、後でまた来てください。"],
-        504: ["Gateway Timeout", "c5xx", "中継地点でタイムアウト。返事が遅すぎます。", "裏側のサーバーが応答していない状態です。"]
+        100: ["Continue", "c1xx", "Request received, keep going.", "The server is waiting for the rest of the request."],
+        101: ["Switching Protocols", "c1xx", "Switching to a different protocol.", "Common when upgrading to WebSockets."],
+        200: ["OK", "c2xx", "Success! Everything is working fine.", "The standard response for successful HTTP requests."],
+        201: ["Created", "c2xx", "Success! A new resource has been created.", "Common after a successful POST request."],
+        204: ["No Content", "c2xx", "Success, but nothing to show.", "Server processed the request but returns no data."],
+        301: ["Moved Permanently", "c3xx", "The URL has changed permanently.", "Automatically redirects to the new location."],
+        302: ["Found", "c3xx", "The URL has changed temporarily.", "A temporary redirect to a different page."],
+        304: ["Not Modified", "c3xx", "Nothing changed. Use your cache.", "Saves bandwidth by not re-downloading data."],
+        400: ["Bad Request", "c4xx", "The server cannot understand the request.", "Check your parameters or syntax."],
+        401: ["Unauthorized", "c4xx", "Authentication is required.", "You need to log in to access this page."],
+        403: ["Forbidden", "c4xx", "You don't have permission to view this.", "Access is strictly denied by the server."],
+        404: ["Not Found", "c4xx", "The page could not be found.", "The most famous error. Check the URL for typos."],
+        405: ["Method Not Allowed", "c4xx", "The request method is not supported.", "e.g., trying to POST where only GET is allowed."],
+        408: ["Request Timeout", "c4xx", "The server timed out waiting for you.", "Check your internet connection stability."],
+        418: ["I'm a teapot", "c4xx", "I'm a teapot. Cannot brew coffee.", "An April Fools' joke. Yes, this is a real official code."],
+        429: ["Too Many Requests", "c4xx", "Slow down! You've sent too many requests.", "You've hit the rate limit. Wait a bit."],
+        500: ["Internal Server Error", "c5xx", "The server crashed or hit a bug.", "Something went wrong on the server's side."],
+        502: ["Bad Gateway", "c5xx", "The server received an invalid response.", "Often happens when a server is restarting."],
+        503: ["Service Unavailable", "c5xx", "Server is overloaded or down for maintenance.", "The server is temporarily unable to handle requests."],
+        504: ["Gateway Timeout", "c5xx", "The upstream server failed to respond in time.", "A timeout between servers behind the scenes."]
     };
 
     const input = document.getElementById('codeInput');
     const resArea = document.getElementById('resultArea');
+    const modal = document.getElementById('modal');
 
     input.oninput = () => {
         const val = input.value;
@@ -160,6 +168,10 @@
             resArea.innerHTML = `<div style="text-align: center; color: #ccc; margin-top: 40px; font-weight: 700;">Type 3-digit code</div>`;
         }
     };
+
+    document.getElementById('homeBtn').onclick = () => modal.style.display = 'flex';
+    document.getElementById('closeModal').onclick = () => modal.style.display = 'none';
+    window.onclick = (e) => { if (e.target == modal) modal.style.display = 'none'; };
 </script>
 
 </body>
